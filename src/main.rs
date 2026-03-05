@@ -34,7 +34,9 @@ async fn main() {
         .await
         .unwrap();
 
-    let mut reverse_fen = 1;
+    let mut reverse_fen = 1; // The variable is there to help so that we flip the fen only once when playing as black
+
+    let mut countdown = 5; // for showing the button has been pressed
 
     loop {
         clear_background(background_color);
@@ -59,7 +61,7 @@ async fn main() {
                         );
 
                         // just to remind you when we change the perspective just reverse the string
-                        if reverse_fen == 1 {
+                        if reverse_fen >= 1 {
                             fen = fen.chars().rev().collect();
                             reverse_fen -= 1;
                         }
@@ -311,6 +313,7 @@ async fn main() {
                         }
                     }
                 }
+
             }
             State::MENU => {
                 draw_text(
@@ -369,6 +372,33 @@ async fn main() {
                         screen_height * 2. / 6.,
                         background_color,
                     );
+                }
+                if is_key_down(KeyCode::W) {
+                    draw_texture(
+                        &white_press,
+                        (screen_width - white_hover.width()) * 5. / 6.,
+                        screen_height * 2. / 6.,
+                        background_color,
+                    );
+                    countdown -= 1;
+                    if countdown == 0 {
+                        state = State::PLAY;
+                        player_color = "white";
+                        countdown = 100;
+                    }
+                } else if is_key_down(KeyCode::B) {
+                    draw_texture(
+                        &black_press,
+                        (screen_width - black_hover.width()) * 1. / 6.,
+                        screen_height * 2. / 6.,
+                        background_color,
+                    );
+                    countdown -= 1;
+                    if countdown == 0 {
+                        state = State::PLAY;
+                        player_color = "black";
+                        countdown = 5;
+                    }
                 }
             }
         }
